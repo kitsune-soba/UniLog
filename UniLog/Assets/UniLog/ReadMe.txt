@@ -1,4 +1,4 @@
-UniLog 1.0
+UniLog 1.0.0
 
 詳しい説明や最新版はこちら：https://github.com/kitsune-soba/UniLog
 
