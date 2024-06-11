@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb239763343f0ee4d95e56d4cc97cfe4, type: 3}
   m_Name: TestPatternSettings_2
   m_EditorClassIdentifier: 
-  filteringKeyword_: '[TestPatternSettings_2]'
+  header_: 
   debugOutputConditionInDefaultMode:
     enable: 1
     level: 5

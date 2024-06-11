@@ -3,22 +3,15 @@
 	// 整形されたログメッセージを生成するクラス
 	public static class LogMessageCreater
 	{
-		// デバッグ出力用のメッセージを生成する
-		public static string CreateDebugOutputMessage(string filteringKeyword, LogLevel level, string message)
+		// 出力用のメッセージを生成する
+		public static string CreateMessage(string header, LogLevel level, string message)
 		{
-			bool filtered = !string.IsNullOrEmpty(filteringKeyword);
+			bool hasHeader = header != null;
 			bool tagged = GetLevelTag(level, out string tag);
 
-			if (filtered && tagged) { return filteringKeyword + tag + message; }
-			else if (filtered && !tagged) { return filteringKeyword + message; }
+			if (hasHeader && tagged) { return header + tag + message; }
+			else if (hasHeader && !tagged) { return header + message; }
 			else if (tagged) { return tag + message; }
-			else { return message; }
-		}
-
-		// ログファイル出力用のメッセージを生成する
-		public static string CreateLogFileMessage(LogLevel level, string message)
-		{
-			if (GetLevelTag(level, out string tag)) { return tag + message; }
 			else { return message; }
 		}
 
@@ -35,6 +28,9 @@
 					return true;
 				case LogLevel.Warning:
 					result = "[Warning]";
+					return true;
+				case LogLevel.Debug:
+					result = "[Debug]";
 					return true;
 				default:
 					result = null;

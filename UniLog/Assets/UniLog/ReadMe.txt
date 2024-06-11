@@ -1,27 +1,21 @@
-UniLog 1.0.0
-
-詳しい説明や最新版はこちら：https://github.com/kitsune-soba/UniLog
+UniLog 1.1.0
 
 ■ クイックスタート
 
-１．インストール
+1. インポート後の設定
 
-UniLog_*.unitypackage をインポート
+プロジェクトのアセンブリ定義から Assets/UniLog/UniLog.asmdef を参照する。
 
-２．スクリプトを書く
+2. ログ出力のコードを書く
 
-このようにしてログ出力を行う↓
-第一引数はログメッセージ。第二引数はログレベル。
+// using UniLog; が必要
+Log.Warning("警告メッセージ");
+Log.Info("何らかの情報");
 
-// using UniLog してあるという前提
-Log.WriteLine("This is an error message.", LogLevel.Error);
+３．ログ出力の設定（任意）
 
-また、このようにして動作モードを Detail Mode に切り替えることができる↓
+Unity エディタで Assets/UniLog/Resources/UniLogSettings を選択して、インスペクタで適宜設定を行う。
 
-// using UniLog してあるという前提
-Log.settings.detailMode = true;
+■ 詳しい説明
 
-３．ログ出力の設定
-
-Assets/UniLog/Resources/UniLogSettings を選択して、インスペクタで適宜設定を行う。
-動作モードごとに出力の閾値となるログレベルを指定できる。
+https://github.com/kitsune-soba/UniLog

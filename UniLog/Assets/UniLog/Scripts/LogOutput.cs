@@ -34,7 +34,7 @@ namespace UniLog
 		public Status status { get; private set; } = Status.Fine;
 		public Settings settings { get; private set; } = null;
 
-		private readonly string selfFilteringKeyword = "[UniLog]";
+		private readonly string selfHeader = "[UniLog]";
 		private LogFileWriter logFile = null;
 
 #if !UNITY_EDITOR && UNITY_STANDALONE_WIN
@@ -55,27 +55,27 @@ namespace UniLog
 			settings = Resources.Load<Settings>(settingsPath);
 			if (settings == null)
 			{
-				Debug.LogError(string.Format("{0}[Error]Failed to load \"{1}\" in Resources directory.", selfFilteringKeyword, settingsPath));
+				Debug.LogError(string.Format($"{selfHeader}[Error]Failed to load \"{settingsPath}\" in Resources directory."));
 				status |= Status.SettingsLoadError;
 			}
 		}
 
 		// ログ出力
-		public void WriteLine(string message, LogLevel level = LogLevel.Information)
+		public void WriteLine(string message, LogLevel level, string header)
 		{
 			if (status.HasFlag(Status.SettingsLoadError)) { return; } // 設定のロードに失敗した場合は既にコンストラクタでエラーを吐いている筈なので、ここではエラー出力はしない
+
+			string formattedMessage = LogMessageCreater.CreateMessage(header, level, message);
 
 			// デバッグ出力
 			if (settings.GetCurrentDebugOutputCondition().Acceptable(level))
 			{
-				string formattedMessage = LogMessageCreater.CreateDebugOutputMessage(settings.filteringKeyword, level, message);
 				WriteDebugOutputLine(formattedMessage, level);
 			}
 
 			// ログファイル出力
 			if (settings.GetCurrentLogFileCondition().Acceptable(level))
 			{
-				string formattedMessage = LogMessageCreater.CreateLogFileMessage(level, message);
 				WriteLogFileLine(formattedMessage);
 			}
 		}
@@ -90,7 +90,7 @@ namespace UniLog
 #elif UNITY_STANDALONE_WIN
 			OutputDebugString(message);
 #else
-			// NOP（その他のプラットフォームでどうするか知らないので未実装）
+			// NOP（その他のプラットフォームでどう実装するか知らないので未実装）
 #endif
 		}
 
@@ -112,7 +112,7 @@ namespace UniLog
 					{
 						string errorMessage = string.Format("Failed to open the log file with {0} mode : {1}",
 							settings.logFileAppend ? "append" : "write", settings.GetLogFilePath());
-						WriteDebugOutputLine(LogMessageCreater.CreateDebugOutputMessage(selfFilteringKeyword, LogLevel.Error, errorMessage), LogLevel.Error);
+						WriteDebugOutputLine(LogMessageCreater.CreateMessage(selfHeader, LogLevel.Error, errorMessage), LogLevel.Error);
 						status |= Status.LogFileIOError;
 						return;
 					}

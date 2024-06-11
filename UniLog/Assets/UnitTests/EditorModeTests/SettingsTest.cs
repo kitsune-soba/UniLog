@@ -19,16 +19,21 @@ namespace Tests
 			Assert.IsFalse(settings.detailMode);
 		}
 
-		// filteringKeyword のテスト
-		// 要件１：設定されたフィルタリング用キーワードを返す
+		// header のテスト
+		// 要件１：設定されたヘッダを返す
+		// 要件２：ヘッダが指定されていない（インスペクタで空文字になっている）場合は Project Settings の Product Name（を大かっこで囲った文字列）を返す
 		[Test] // 要件１
-		public void FilteringKeyword_Test()
+		public void Header_SpecifiedTest()
 		{
 			Settings settings1 = Resources.Load<Settings>(testPatternSettingsPath_1);
-			Settings settings2 = Resources.Load<Settings>(testPatternSettingsPath_2);
+			Assert.AreEqual("[TestPatternSettings_1]", settings1.header);
+		}
 
-			Assert.AreEqual("[TestPatternSettings_1]", settings1.filteringKeyword);
-			Assert.AreEqual("[TestPatternSettings_2]", settings2.filteringKeyword);
+		[Test] // 要件２
+		public void Header_EmptyTest()
+		{
+			Settings settings2 = Resources.Load<Settings>(testPatternSettingsPath_2);
+			Assert.AreEqual("[UniLogSample]", settings2.header);
 		}
 
 		// logFileAppend のテスト

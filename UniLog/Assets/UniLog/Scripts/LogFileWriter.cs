@@ -16,6 +16,9 @@ namespace UniLog
 
 		public void Dispose()
 		{
+			stream.WriteLine(new string('-', 80));
+			stream.WriteLine($"Log finish: {DateTime.Now.ToString()}");
+
 			stream?.Close();
 			stream = null;
 		}
@@ -32,7 +35,13 @@ namespace UniLog
 		// ログファイル書き込み
 		public void WriteLine(string message)
 		{
-			stream.WriteLine(stopwatch.Elapsed.TotalSeconds.ToString("F3") + "\t| " + message);
+			double rawSecondsDouble = stopwatch.Elapsed.TotalSeconds;
+			uint rawSecondsUint = (uint)rawSecondsDouble;
+			uint hours = rawSecondsUint / 3600;
+			uint minutes = (rawSecondsUint % 3600) / 60;
+			uint seconds = rawSecondsUint % 60;
+			double decimalSeconds = (rawSecondsDouble - rawSecondsUint);
+			stream.WriteLine($"{hours.ToString("D2")}:{minutes.ToString("D2")}:{seconds.ToString("D2")}{decimalSeconds.ToString("F3").TrimStart('0')} | {message}");
 		}
 
 		// ログファイルを開く
@@ -63,21 +72,12 @@ namespace UniLog
 		{
 			if (append)
 			{
-				stream.WriteLine(
-					'\n' +
-					new string('-', 80) + '\n' +
-					"Log start at " + DateTime.Now.ToString() + '\n' +
-					"Application: " + Application.productName + ' ' + Application.version + '\n' +
-					"platform: " + Application.platform);
+				stream.WriteLine(""); // 改行
 			}
-			else
-			{
-				stream.WriteLine(
-					"Log start at " + DateTime.Now.ToString() + '\n' +
-					"Application: " + Application.productName + ' ' + Application.version + '\n' +
-					"Platform: " + Application.platform + '\n' +
-					new string('-', 80));
-			}
+			stream.WriteLine($"Log start: {DateTime.Now.ToString()}");
+			stream.WriteLine($"Application: {Application.productName} {Application.version}");
+			stream.WriteLine($"Platform: {Application.platform}");
+			stream.WriteLine($"{ new string('-', 80)}");
 		}
 	}
 }

@@ -9,10 +9,11 @@ namespace Tests
 	// LogOutput のテスト
 	public class LogOutputTest
 	{
-		private string noticeSettingsPath = "NoticeSettings";
-		private string invalidLogPathSettingsPath = "InvalidLogPathSettings";
-		private string disabledSettingsPath = "DisabledSettings";
-		private string invalidSettingsPath = "invalid path test";
+		private readonly string header = "[LogOutputTest]";
+		private readonly string noticeSettingsPath = "NoticeSettings";
+		private readonly string invalidLogPathSettingsPath = "InvalidLogPathSettings";
+		private readonly string disabledSettingsPath = "DisabledSettings";
+		private readonly string invalidSettingsPath = "invalid path test";
 
 		private void ClearFile(string path)
 		{
@@ -75,7 +76,7 @@ namespace Tests
 			LogAssert.ignoreFailingMessages = true;
 			using (LogOutput output = new LogOutput(invalidLogPathSettingsPath))
 			{
-				output.WriteLine(""); // ファイルを開くためにログを書き込む
+				output.WriteLine("", LogLevel.Information, header); // ファイルを開くためにログを書き込む
 				Assert.AreEqual(LogOutput.Status.LogFileIOError, output.status);
 			}
 		}
@@ -119,15 +120,15 @@ namespace Tests
 				Assert.AreEqual(LogLevel.Notice, logFileCondition.level);
 
 				// 出力されないテスト
-				output.WriteLine("This is a message that should NOT be output.", LogLevel.Debug);
-				output.WriteLine("This is a message that should NOT be output.", LogLevel.Information);
+				output.WriteLine("This is a message that should NOT be output.", LogLevel.Debug, header);
+				output.WriteLine("This is a message that should NOT be output.", LogLevel.Information, header);
 				Assert.IsFalse(File.Exists(logPath));
 
 				// 出力されるテスト
-				output.WriteLine("This is a message that should be output.", LogLevel.Notice);
-				output.WriteLine("This is a message that should be output.", LogLevel.Warning);
-				output.WriteLine("This is a message that should be output.", LogLevel.Error);
-				output.WriteLine("This is a message that should be output.", LogLevel.Fatal);
+				output.WriteLine("This is a message that should be output.", LogLevel.Notice, header);
+				output.WriteLine("This is a message that should be output.", LogLevel.Warning, header);
+				output.WriteLine("This is a message that should be output.", LogLevel.Error, header);
+				output.WriteLine("This is a message that should be output.", LogLevel.Fatal, header);
 				Assert.IsTrue(File.Exists(logPath));
 			}
 			ClearFile(logPath);
@@ -144,12 +145,12 @@ namespace Tests
 				Assert.IsFalse(output.settings.GetCurrentLogFileCondition().enable);
 
 				// 出力されないテスト
-				output.WriteLine("This is a message that should NOT be output.", LogLevel.Debug);
-				output.WriteLine("This is a message that should NOT be output.", LogLevel.Information);
-				output.WriteLine("This is a message that should NOT be output.", LogLevel.Notice);
-				output.WriteLine("This is a message that should NOT be output.", LogLevel.Warning);
-				output.WriteLine("This is a message that should NOT be output.", LogLevel.Error);
-				output.WriteLine("This is a message that should NOT be output.", LogLevel.Fatal);
+				output.WriteLine("This is a message that should NOT be output.", LogLevel.Debug, header);
+				output.WriteLine("This is a message that should NOT be output.", LogLevel.Information, header);
+				output.WriteLine("This is a message that should NOT be output.", LogLevel.Notice, header);
+				output.WriteLine("This is a message that should NOT be output.", LogLevel.Warning, header);
+				output.WriteLine("This is a message that should NOT be output.", LogLevel.Error, header);
+				output.WriteLine("This is a message that should NOT be output.", LogLevel.Fatal, header);
 				Assert.IsFalse(File.Exists(logPath));
 			}
 		}
@@ -165,9 +166,9 @@ namespace Tests
 				ClearFile(logPath);
 
 				Assert.IsFalse(File.Exists(logPath));
-				output.WriteLine("This is a message that should NOT be output.", LogLevel.Debug);
+				output.WriteLine("This is a message that should NOT be output.", LogLevel.Debug, header);
 				Assert.IsFalse(File.Exists(logPath));
-				output.WriteLine("This is a message that should be output.", LogLevel.Notice); // 初めてログファイルへ出力する
+				output.WriteLine("This is a message that should be output.", LogLevel.Notice, header); // 初めてログファイルへ出力する
 				Assert.IsTrue(File.Exists(logPath));
 			}
 			ClearFile(logPath);
@@ -180,7 +181,7 @@ namespace Tests
 			using (LogOutput output = new LogOutput(invalidSettingsPath))
 			{
 				Assert.IsTrue(output.status.HasFlag(LogOutput.Status.SettingsLoadError));
-				output.WriteLine("This is a message that should NOT be output.", LogLevel.Fatal); // 何も起きないはず
+				output.WriteLine("This is a message that should NOT be output.", LogLevel.Fatal, header); // 何も起きないはず
 			}
 		}
 
@@ -190,9 +191,9 @@ namespace Tests
 			LogAssert.ignoreFailingMessages = true;
 			using (LogOutput output = new LogOutput(invalidLogPathSettingsPath))
 			{
-				output.WriteLine("This is a message that should NOT be output."); // ファイルを開くためにログを書き込む
+				output.WriteLine("This is a message that should NOT be output.", LogLevel.Information, header); // ファイルを開くためにログを書き込む
 				Assert.IsTrue(output.status.HasFlag(LogOutput.Status.LogFileIOError));
-				output.WriteLine("This is a message that should NOT be output."); // ログファイルへの出力は行われない
+				output.WriteLine("This is a message that should NOT be output.", LogLevel.Information, header); // ログファイルへの出力は行われない
 			}
 		}
 	}

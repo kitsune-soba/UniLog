@@ -13,23 +13,23 @@ namespace UniLog
 	{
 		// デバッグ出力
 		[SerializeField]
-		private string filteringKeyword_ = string.Empty;
+		private string header_ = string.Empty;
 		[SerializeField]
-		private OutputCondition debugOutputConditionInDefaultMode = new OutputCondition { enable = true, level = LogLevel.Notice };
+		private OutputCondition debugOutputConditionInDefaultMode = new OutputCondition { enable = true, level = LogLevel.Information };
 		[SerializeField]
-		private OutputCondition debugOutputConditionInDetailMode = new OutputCondition { enable = true, level = LogLevel.Information };
+		private OutputCondition debugOutputConditionInDetailMode = new OutputCondition { enable = true, level = LogLevel.Debug };
 		[SerializeField]
 		private OutputCondition debugOutputConditionOnEditor = new OutputCondition { enable = true, level = LogLevel.Debug };
 
 		// ログファイル
 		[SerializeField]
-		private string logFilePathRaw = "output.log";
+		private string logFilePathRaw = string.Empty;
 		[SerializeField]
 		private bool logFileAppend_ = false;
 		[SerializeField]
-		private OutputCondition logFileConditionInDefaultMode = new OutputCondition { enable = true, level = LogLevel.Error };
+		private OutputCondition logFileConditionInDefaultMode = new OutputCondition { enable = true, level = LogLevel.Notice };
 		[SerializeField]
-		private OutputCondition logFileConditionInDetailMode = new OutputCondition { enable = true, level = LogLevel.Information };
+		private OutputCondition logFileConditionInDetailMode = new OutputCondition { enable = true, level = LogLevel.Debug };
 		[SerializeField]
 		private OutputCondition logFileConditionOnEditor = new OutputCondition { enable = false, level = LogLevel.Debug };
 
@@ -41,7 +41,7 @@ namespace UniLog
 		private DetailMode detailMode_ = new DetailMode { value = false };
 		public bool detailMode { get => detailMode_.value; set => detailMode_.value = value; }
 
-		public string filteringKeyword { get => filteringKeyword_; }
+		public string header { get => string.IsNullOrEmpty(header_) ? $"[{Application.productName}]" : header_; }
 		public bool logFileAppend { get => logFileAppend_; }
 
 		// 現在有効なデバッグ出力の出力条件を返す
@@ -68,7 +68,7 @@ namespace UniLog
 				(Application.platform == RuntimePlatform.OSXPlayer) ||
 				(Application.platform == RuntimePlatform.WindowsPlayer))
 			{
-				return logFilePathRaw;
+				return string.IsNullOrEmpty(logFilePathRaw) ? $"{Application.productName}.log" : logFilePathRaw;
 			}
 			else
 			{
@@ -81,7 +81,7 @@ namespace UniLog
 		[CustomEditor(typeof(Settings))]
 		public class SettingsEditor : Editor
 		{
-			private SerializedProperty filteringKeyword_;
+			private SerializedProperty header_;
 			private SerializedProperty debugOutputConditionInDefaultMode;
 			private SerializedProperty debugOutputConditionInDetailMode;
 			private SerializedProperty debugOutputConditionOnEditor;
@@ -96,7 +96,7 @@ namespace UniLog
 
 			private void OnEnable()
 			{
-				filteringKeyword_ = serializedObject.FindProperty(nameof(filteringKeyword_));
+				header_ = serializedObject.FindProperty(nameof(header_));
 				debugOutputConditionInDefaultMode = serializedObject.FindProperty(nameof(debugOutputConditionInDefaultMode));
 				debugOutputConditionInDetailMode = serializedObject.FindProperty(nameof(debugOutputConditionInDetailMode));
 				debugOutputConditionOnEditor = serializedObject.FindProperty(nameof(debugOutputConditionOnEditor));
@@ -116,7 +116,7 @@ namespace UniLog
 				// デバッグ出力の設定を表示
 				EditorGUILayout.LabelField("Debug output", EditorStyles.boldLabel);
 				EditorGUI.indentLevel++;
-				filteringKeyword_.stringValue = EditorGUILayout.TextField("Filtering Keyword", filteringKeyword_.stringValue);
+				header_.stringValue = EditorGUILayout.TextField("Header", header_.stringValue);
 				debugOutputFoldout = EditorGUILayout.Foldout(debugOutputFoldout, "Log Level");
 				if (debugOutputFoldout)
 				{

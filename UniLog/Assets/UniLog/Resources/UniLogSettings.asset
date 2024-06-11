@@ -12,24 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb239763343f0ee4d95e56d4cc97cfe4, type: 3}
   m_Name: UniLogSettings
   m_EditorClassIdentifier: 
-  filteringKeyword_: 
+  header_: 
   debugOutputConditionInDefaultMode:
     enable: 1
-    level: 3
+    level: 4
   debugOutputConditionInDetailMode:
     enable: 1
-    level: 4
+    level: 5
   debugOutputConditionOnEditor:
     enable: 1
     level: 5
-  logFilePathRaw: output.log
+  logFilePathRaw: 
   logFileAppend_: 0
   logFileConditionInDefaultMode:
     enable: 1
-    level: 1
+    level: 3
   logFileConditionInDetailMode:
     enable: 1
-    level: 4
+    level: 5
   logFileConditionOnEditor:
     enable: 0
     level: 5
